@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="/socket.io/socket.io.js"></script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #blockcont{
+    width:0px;
+    height:0px;
+    position:absolute;
+    top:40%;
+    left:50%;
+    z-index:2;
+    background: rgba(255, 255, 255, 0.1);
+    transform:translate(-50%, -50%);
+}
+        *{
+            padding:0px;
+            margin:0px;
+            box-sizing: border-box;
+        }
+
+        body{
+    background: #0052D4;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to bottom, #6FB1FC, #4364F7, #0052D4);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to bottom, #6FB1FC, #4364F7, #0052D4); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background-repeat: no-repeat;
+    height:100vh;    
+}
+*{
+    padding:0px;
+    margin:0px;
+    box-sizing: border-box;
+}
+#select{
+    width:80%;
+    position:absolute;
+    left:10%;
+    top: 50%;
+    height:200px;
+    transform:translate(1% ,-50%);
+    background:#fff;
+    box-shadow:1px 1px 9px #202020;
+}
+#message{
+    font-size:25px;
+    color:black;
+    left:50%;
+    font-weight:bolder;
+    white-space: nowrap;
+    top:20px;
+    transform:translate(-50%);
+    position:absolute;
+}
+#btn-x{
+    width:35%;
+    height:50px;
+    background: #0052D4;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to bottom, #6FB1FC, #4364F7);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to bottom, #6FB1FC, #4364F7); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    color:white;
+    font-size:25px;
+    border:none;
+    outline:none;
+    position:absolute;
+    box-shadow:1px 1px 6px #7a7a7a;
+    top:90px;
+    left:10%;    
+}
+#try-again{
+    width:0px;
+    height:0px;
+    border:none;
+    outline:none;
+    position:absolute;
+    left:50%;
+    transform: translate(-50%);
+    font-size:0px;
+    color:white;
+    top:90px;
+    background: #0052D4;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to bottom, #6FB1FC, #4364F7, #0052D4);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to bottom, #6FB1FC, #4364F7, #0052D4); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    border-radius:5px;
+    box-shadow: 2px 2px 6px #202020;
+}
+#winning-box{
+    width:0%;
+    height: 0px;
+    position:absolute;
+    z-index: 3;
+    top:50%;
+    left:50%;
+    transform: translate(-50%, -50%);
+    background:#494949;
+    box-shadow:2px 2px 8px #202020;
+}
+#box-header{
+    font-size:24px;
+    color:white;
+    font-weight:bolder;
+    position: absolute;
+    left:50%;
+    text-align: center;
+    transform: translate(-50%);
+    top:30px;
+    white-space: nowrap;
+}
+#move{
+    width: 80%;
+    height: 100px;
+    position:absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translate(-50%);
+    background: #3f3f3f;
+    color:white;
+    font-size:30px;
+    padding-top:30px;
+    text-align: center;
+}
+#retry-btn{
+    position:absolute;
+    top:100px;
+    width:80%;
+    left:10%;
+    height:45px;
+    border:none;
+    outline:none;
+    background:red;
+    color:white;
+    box-shadow: 2px 2px 6px #202020;
+    font-size:25px;
+}
+#wins{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    width:85%;
+    height:180px;background:#4d4d4d;
+}
+#wins1{
+    position:absolute;
+    top:50%;
+    left:50%;
+    display:none;
+    transform:translate(-50%, -50%);
+    width:85%;
+    height:180px;background:#4d4d4d;
+}
+#text{
+    font-size:24px;
+    color:white;
+    position:absolute;
+    top: 30px;
+    left:50%;
+    transform: translate(-50%);
+    white-space: nowrap;
+
+
+        }
+#btn-zero{
+    width:35%;
+    height:50px;
+    background: #0052D4;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to bottom, #6FB1FC, #4364F7);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to bottom, #6FB1FC, #4364F7); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    color:white;
+    font-size:25px;
+    border:none;
+    outline:none;
+    position:absolute;
+    box-shadow:1px 1px 6px #7a7a7a;
+    top:90px;
+    left:55%;    
+}
+#container{
+    width:300px;
+    height:300px;
+    position:absolute;
+    top:40%;
+    left:50%;
+    transform:translate(-50%, -50%);
+}
+/* 
+btntick{
+    width: 100px;
+    height: 100px;
+    background:transparent;
+    font-size:60px;
+    font-weight:bolder;
+    position:absolute;
+} */
+button{
+    border:none;
+    width: 100px;
+    height: 100px;
+    background:transparent;
+    font-size:60px;
+    font-weight:bolder;
+    position:absolute;
+}
+.btn1{
+    border-right:6px solid black;
+    border-bottom:6px solid black;
+}
+.btn2{
+    position:absolute;
+    left:100px;
+    border-right:6px solid black;
+    border-bottom:6px solid black;
+}
+.btn3{
+    position:absolute;
+    left:200px;
+    border-bottom:6px solid black;
+}
+.btn4{
+    position:absolute;
+    top:100px;
+    left:0px; border-right:6px solid black;
+    border-bottom:6px solid black;
+}
+.btn5{
+    position:absolute;
+    top:100px; border-right:6px solid black;
+    border-bottom:6px solid black;
+    left:100px;
+}
+.btn6{
+    position:absolute;
+    top:100px; 
+    border-bottom:6px solid black;
+    left:200px;
+}
+.btn7{
+    position:absolute;
+    top:200px; border-right:6px solid black;
+    left:0px;
+}
+.btn8{
+    position:absolute;
+    top:200px; border-right:6px solid black;
+    left:100px;
+}
+.btn9{
+    position:absolute;
+    top:200px;
+    left:200px;
+}
+#move{
+    width: 80%;
+    height: 100px;
+    position:absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translate(-50%);
+    background: #3f3f3f;
+    color:white;
+    font-size:30px;
+    padding-top:30px;
+    text-align: center;
+}
+#retry-btn{
+    position:absolute;
+    top:100px;
+    width:80%;
+    left:10%;
+    height:45px;
+    border:none;
+    outline:none;
+    background:red;
+    color:white;
+    box-shadow: 2px 2px 6px #202020;
+    font-size:25px;
+}
+#wins{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    width:85%;
+    height:180px;background:#4d4d4d;
+}
+#wins1{
+    position:absolute;
+    top:50%;
+    left:50%;
+    display:none;
+    transform:translate(-50%, -50%);
+    width:85%;
+    height:180px;background:#4d4d4d;
+}
+#text{
+    font-size:24px;
+    color:white;
+    position:absolute;
+    top: 30px;
+    left:50%;
+    transform: translate(-50%);
+    white-space: nowrap;
+
+
+        }
+    </style>
+</head>
+<body onload="loadbody()" id="bod">
+    <div id="blockcont"></div>
+    <div id="container">
+        <button class="btn1" onclick="move1()"></button>
+        <button class="btn2" onclick="move2()"></button>
+        <button class="btn3" onclick="move3()"></button>
+        <button  class="btn4" onclick="move4()"></button>
+        <button class="btn5" onclick="move5()"></button>
+        <button class="btn6" onclick="move6()"></button>
+        <button class="btn7" onclick="move7()"></button>
+        <button class="btn8" onclick="move8()"></button>
+        <button class="btn9" onclick="move9()"></button>
+    </div>
+    <script>
+        var btn1 = document.querySelector(".btn1");
+        var btn2 = document.querySelector(".btn2");
+        var btn3 = document.querySelector(".btn3");
+        var btn4 = document.querySelector(".btn4");
+        var btn5 = document.querySelector(".btn5");
+        var btn6 = document.querySelector(".btn6");
+        var btn7 = document.querySelector(".btn7");
+        var btn8 = document.querySelector(".btn8");
+        var btn9 = document.querySelector(".btn9");
+        const socket = io();
+        socket.on('Xmoved', (pos) => {
+            document.querySelector(".btn"+pos).innerHTML = "X";
+            document.getElementById("blockcont").setAttribute("style", "height:0px;width:0px;");
+        });
+        function move1() {
+            const i = 1;
+            if(btn1.innerHTML == "") {
+                socket.emit("Omoved", i);
+                btn1.innerHTML = "O";
+                disableall();
+            }
+        }
+        function move2() {
+            const i = 2;
+            if(btn2.innerHTML == "") {
+                btn2.innerHTML = "O";
+                disableall();
+                socket.emit("Omoved", i);
+            }
+        }
+        function move3() {
+            const i = 3;
+            if(btn3.innerHTML == "") {
+                socket.emit("Omoved", i);
+                disableall();
+                btn3.innerHTML = "O";
+            }
+        }
+        function move4() {
+            const i = 4;
+            if(btn4.innerHTML == "") {
+                socket.emit("Omoved", i);
+                disableall();
+                btn4.innerHTML = "O";
+            }
+        }
+        function move5() {
+            const i = 5;
+            if(btn5.innerHTML == "") {
+                socket.emit("Omoved", i);
+                disableall();
+                btn5.innerHTML = "O";
+            }
+        }
+        function move6() {
+            const i = 6;
+            if(btn6.innerHTML == "") {
+                socket.emit("Omoved", i);
+                disableall();
+                btn6.innerHTML = "O";
+            }
+        }
+        function move7() {
+            const i = 7;
+            if(btn7.innerHTML == "") {
+                socket.emit("Omoved", i);
+                disableall();
+                btn7.innerHTML = "O";
+            }
+        }
+        function move8() {
+            const i = 8;
+            if(btn8.innerHTML == "") {
+                socket.emit("Omoved", i);
+                disableall();
+                btn8.innerHTML = "O";
+            }
+        }
+        function move9() {
+            const i = 9;
+            if(btn9.innerHTML == "") {
+                btn9.innerHTML = "O";
+                disableall();
+                socket.emit("Omoved", i);
+            }
+        }
+        function disableall() {
+            document.getElementById("blockcont").setAttribute("style", "height:300px;width:300px;");
+        }
+        function loadbody() {
+            var arr = new Array();
+  var count;
+  arr = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+  setInterval(() => {
+    count = 1;
+    for (var i = 0; i <= 8; i++) {
+      arr[i] = document.querySelector(".btn" + count).innerHTML;
+      count++;
+    }
+    if (arr[0] == "O" && arr[1] == "O" && arr[2] == "O") {
+      Owins();
+    } else if (arr[3] == "O" && arr[4] == "O" && arr[5] == "O") {
+      Owins();
+    } else if (arr[6] == "O" && arr[7] == "O" && arr[8] == "O") {
+      Owins();
+    } else if (arr[0] == "O" && arr[3] == "O" && arr[6] == "O") {
+      Owins();
+    } else if (arr[1] == "O" && arr[4] == "O" && arr[7] == "O") {
+      Owins();
+    } else if (arr[2] == "O" && arr[5] == "O" && arr[8] == "O") {
+      Owins();
+    } else if (arr[0] == "O" && arr[4] == "O" && arr[8] == "O") {
+      Owins();
+    } else if (arr[2] == "O" && arr[4] == "O" && arr[6] == "O") {
+      Owins();
+    }
+
+    if (arr[0] == "X" && arr[1] == "X" && arr[2] == "X") {
+      xwins();
+    } else if (arr[3] == "X" && arr[4] == "X" && arr[5] == "X") {
+      xwins();
+    } else if (arr[6] == "X" && arr[7] == "X" && arr[8] == "X") {
+      xwins();
+    } else if (arr[0] == "X" && arr[3] == "X" && arr[6] == "X") {
+      xwins();
+    } else if (arr[1] == "X" && arr[4] == "X" && arr[7] == "X") {
+      xwins();
+    } else if (arr[2] == "X" && arr[5] == "X" && arr[8] == "X") {
+      xwins();
+    } else if (arr[0] == "X" && arr[4] == "X" && arr[8] == "X") {
+      xwins();
+    } else if (arr[2] == "X" && arr[4] == "X" && arr[6] == "X") {
+      xwins();
+    } 
+    var ccc = 0;
+    for(var i = 1;i<=9;i++) {
+        var a = document.querySelector(".btn"+i).innerHTML;
+        if(a=="") {
+            ccc++;
+        }
+    }
+    if(ccc==0) {
+        draw();
+    }
+        }, 100);
+    }
+    function xwins() {
+        document.getElementById("blockcont").setAttribute("style", "height: 300px;width:300px;");
+  console.log("lose");
+  document
+    .getElementById("winning-box")
+    .setAttribute("style", "width:95%;height:170px;");
+  document.getElementById("box-header").innerHTML = "You Lose! Try Again..";
+  document
+    .getElementById("try-again")
+    .setAttribute("style", "width:230px;height:50px;font-size:23px;");
+}
+function Owins() {
+    document.getElementById("blockcont").setAttribute("style", "height: 300px;width:300px;");
+  document.getElementById("winning-box")
+    .setAttribute("style", "width:95%;height:170px;");
+  document.getElementById("box-header").innerHTML =
+    "Oh Yeh! You Won The Match.";
+  document
+    .getElementById("try-again")
+    .setAttribute("style", "width:230px;height:50px;font-size:23px;");
+  console.log("win");
+}
+function draw() {
+    document.getElementById("blockcont").setAttribute("style", "height: 300px;width:300px;");
+  document.getElementById("winning-box")
+    .setAttribute("style", "width:95%;height:170px;");
+  document.getElementById("box-header").innerHTML = "It's A Draw Try Again..";
+  document
+    .getElementById("try-again")
+    .setAttribute("style", "width:230px;height:50px;font-size:23px;");
+  console.log("draw");
+}
+function restart() {
+  location.reload();
+}
+    </script>
+    <div id="winning-box">
+        <span id="box-header"></span>
+        <button id="try-again" onclick="restart()">Play Again</button>
+    </div>
+</body>
+</html>
